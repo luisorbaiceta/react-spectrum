@@ -50,7 +50,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               props.onChange(e);
             }
             setColor(e);
-          }} />
+          }}
+          onChangeEnd={props.onChangeEnd} />
         <ColorSlider
           value={color}
           onChange={(e) => {
@@ -77,23 +78,23 @@ XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onCha
 
 export let XGreenYBlue = Template.bind({});
 XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';
-XGreenYBlue.args = {xChannel: 'green', yChannel: 'blue', onChange: action('onChange')};
+XGreenYBlue.args = {xChannel: 'green', yChannel: 'blue', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XBlueYRed = Template.bind({});
 XBlueYRed.storyName = 'RGB xChannel="blue", yChannel="red"';
-XBlueYRed.args = {xChannel: 'blue', yChannel: 'red', onChange: action('onChange')};
+XBlueYRed.args = {xChannel: 'blue', yChannel: 'red', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XRedYBlue = Template.bind({});
 XRedYBlue.storyName = 'GB xChannel="red", yChannel="blue"';
-XRedYBlue.args = {xChannel: 'red', yChannel: 'blue', onChange: action('onChange')};
+XRedYBlue.args = {xChannel: 'red', yChannel: 'blue', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XRedYGreen = Template.bind({});
 XRedYGreen.storyName = 'RGB xChannel="red", yChannel="green"';
-XRedYGreen.args = {xChannel: 'red', yChannel: 'green', onChange: action('onChange')};
+XRedYGreen.args = {xChannel: 'red', yChannel: 'green', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
-XGreenYRed.args = {xChannel: 'green', yChannel: 'red', onChange: action('onChange')};
+XGreenYRed.args = {xChannel: 'green', yChannel: 'red', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XBlueYGreenStep16 = Template.bind({});
 XBlueYGreenStep16.storyName = 'RGB xChannel="blue", yChannel="green", step="16"';
