@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorAreaProps} from '@react-types/color';
+import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
@@ -288,27 +288,14 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let colorAriaLabellingProps = useLabels(props);
 
   let getValueTitle = () => {
-    switch (state.value.getColorSpace()) {
-      case 'hsb':
-        return [
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('hue', locale), value: state.value.formatChannelValue('hue', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('saturation', locale), value: state.value.formatChannelValue('saturation', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('brightness', locale), value: state.value.formatChannelValue('brightness', locale)})
-        ].join(', ');
-      case 'hsl':
-        return [
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('hue', locale), value: state.value.formatChannelValue('hue', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('saturation', locale), value: state.value.formatChannelValue('saturation', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('lightness', locale), value: state.value.formatChannelValue('lightness', locale)})
-        ].join(', ');
-      case 'rgb':
-        return [
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('red', locale), value: state.value.formatChannelValue('red', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('green', locale), value: state.value.formatChannelValue('green', locale)}),
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName('blue', locale), value: state.value.formatChannelValue('blue', locale)})
-        ].join(', ');
-    }
-    return null;
+    const channels: Set<ColorChannel> = state.value.getColorChannels();
+    const colorNamesAndValues = [];
+    channels.forEach(channel => 
+      colorNamesAndValues.push(
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      )
+    );
+    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : null;
   };
 
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');
@@ -326,9 +313,12 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       ...colorAreaInteractions,
       role: 'group'
     },
-    gradientProps: {},
+    gradientProps: {
+      role: 'presentation'
+    },
     thumbProps: {
-      ...thumbInteractions
+      ...thumbInteractions,
+      role: 'presentation'
     },
     xInputProps: {
       ...xInputLabellingProps,
@@ -338,10 +328,14 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(xChannel).maxValue,
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}) : [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
-      ].join(', ')),
+      'aria-valuetext': (
+        isMobile ?
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}) : 
+        [
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
+        ].join(', ')
+      ),
       title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
@@ -358,10 +352,14 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(yChannel).maxValue,
       step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}) : [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
-      ].join(', ')),
+      'aria-valuetext': (
+        isMobile ?
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}) : 
+        [
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}),
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
+        ].join(', ')
+      ),
       'aria-orientation': 'vertical',
       title: getValueTitle(),
       disabled: isDisabled,
